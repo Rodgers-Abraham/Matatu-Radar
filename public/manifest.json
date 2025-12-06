@@ -8,14 +8,14 @@
     "theme_color": "#FACC15",
     "icons": [
         {
-            "src": "/icon-192.jpg",
+            "src": "/Icon-192.png",
             "sizes": "192x192",
-            "type": "image/jpg"
+            "type": "image/png"
         },
         {
-            "src": "/icon-512.jpg",
+            "src": "/Icon-192.png",
             "sizes": "512x512",
-            "type": "image/jpg"
+            "type": "image/png"
         }
     ]
 }
