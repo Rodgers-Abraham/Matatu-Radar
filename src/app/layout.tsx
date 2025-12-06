@@ -33,6 +33,8 @@ export default function RootLayout({
         <ReportsProvider>
           {children}
         </ReportsProvider>
+        <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );
