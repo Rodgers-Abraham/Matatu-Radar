@@ -8,29 +8,21 @@ import BottomNav from '@/components/BottomNav';
 export default function Home() {
   const { reports, hasSeenWelcome, markWelcomeAsSeen } = useReports();
   const [searchTerm, setSearchTerm] = useState('');
-  const [activeFilter, setActiveFilter] = useState('ALL'); // NEW: For filters
+  const [activeFilter, setActiveFilter] = useState('ALL');
 
-  // NEW: WhatsApp Share Logic
   const handleShare = (report: Report) => {
     const text = `🚨 *MatatuRadar Alert* 🚨\n\nRoute: ${report.route}\nStatus: ${report.safety === 'DANGER' ? '⚠️ DANGER' : '✅ Safe'}\nFare: KES ${report.fare}\n${report.incident !== 'NONE' ? `Condition: ${report.incident}` : ''}\n\nCheck full details on MatatuRadar!`;
-
-    // Create WhatsApp link
     const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
   };
 
-  // NEW: Filter Logic
   const filteredReports = reports
     .filter((r) => {
-      // 1. Search Filter
       const matchesSearch = r.route.toLowerCase().includes(searchTerm.toLowerCase());
-
-      // 2. Category Filter
       let matchesCategory = true;
       if (activeFilter === 'DANGER') matchesCategory = r.safety === 'DANGER';
       if (activeFilter === 'POLICE') matchesCategory = r.incident === 'POLICE';
-      if (activeFilter === 'CHEAP') matchesCategory = r.fare < 80; // Example logic for "Cheap"
-
+      if (activeFilter === 'CHEAP') matchesCategory = r.fare < 80;
       return matchesSearch && matchesCategory;
     })
     .slice(0, 20);
@@ -55,12 +47,13 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 pb-24">
+    // ADDED: dark:bg-gray-900
+    <main className="min-h-screen pb-24">
+
       {/* Header Area */}
       <div className="bg-black p-6 rounded-b-3xl shadow-lg sticky top-0 z-20">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-yellow-400 font-bold text-xl">MatatuRadar</h2>
-          {/* Simple "Clear Filters" indicator if needed */}
           {activeFilter !== 'ALL' && (
             <span className="text-xs text-gray-400">Filter Active: {activeFilter}</span>
           )}
@@ -69,38 +62,39 @@ export default function Home() {
         {/* Search Bar */}
         <div className="relative mb-4">
           <Search className="absolute left-4 top-3.5 text-gray-400 w-5 h-5" />
+          {/* ADDED: dark:bg-gray-800 dark:text-white */}
           <input
             type="text" placeholder="Search route..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 rounded-xl text-black bg-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+            className="w-full pl-12 pr-4 py-3 rounded-xl text-black dark:text-white bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-400 border-none"
           />
         </div>
 
-        {/* NEW: Quick Filters (Scrollable) */}
+        {/* Quick Filters */}
         <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
           <button
             onClick={() => setActiveFilter('ALL')}
-            className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors ${activeFilter === 'ALL' ? 'bg-yellow-400 text-black' : 'bg-gray-800 text-gray-300'
+            className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors ${activeFilter === 'ALL' ? 'bg-yellow-400 text-black' : 'bg-gray-800 dark:bg-gray-700 text-gray-300'
               }`}
           >
             All
           </button>
           <button
             onClick={() => setActiveFilter('DANGER')}
-            className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap flex items-center gap-1 transition-colors ${activeFilter === 'DANGER' ? 'bg-red-500 text-white' : 'bg-gray-800 text-gray-300'
+            className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap flex items-center gap-1 transition-colors ${activeFilter === 'DANGER' ? 'bg-red-500 text-white' : 'bg-gray-800 dark:bg-gray-700 text-gray-300'
               }`}
           >
             <ShieldAlert className="w-4 h-4" /> Danger
           </button>
           <button
             onClick={() => setActiveFilter('POLICE')}
-            className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap flex items-center gap-1 transition-colors ${activeFilter === 'POLICE' ? 'bg-blue-500 text-white' : 'bg-gray-800 text-gray-300'
+            className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap flex items-center gap-1 transition-colors ${activeFilter === 'POLICE' ? 'bg-blue-500 text-white' : 'bg-gray-800 dark:bg-gray-700 text-gray-300'
               }`}
           >
             👮 Police
           </button>
           <button
             onClick={() => setActiveFilter('CHEAP')}
-            className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors ${activeFilter === 'CHEAP' ? 'bg-green-500 text-white' : 'bg-gray-800 text-gray-300'
+            className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors ${activeFilter === 'CHEAP' ? 'bg-green-500 text-white' : 'bg-gray-800 dark:bg-gray-700 text-gray-300'
               }`}
           >
             📉 Cheap (&lt;80)
@@ -118,43 +112,45 @@ export default function Home() {
           </div>
         ) : (
           filteredReports.map((report) => (
-            <div key={report.id} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 relative">
+            // ADDED: dark:bg-gray-800 dark:border-gray-700
+            <div key={report.id} className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 relative transition-colors">
 
-              {/* Top Row: Route & Safety Badge */}
+              {/* Top Row */}
               <div className="flex justify-between items-start mb-2 pr-8">
-                <h4 className="font-bold text-lg text-gray-800 leading-tight">{report.route}</h4>
-                <span className={`px-2 py-1 rounded text-xs font-bold whitespace-nowrap ml-2 ${report.safety === 'SAFE' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                {/* ADDED: dark:text-white */}
+                <h4 className="font-bold text-lg text-gray-800 dark:text-white leading-tight">{report.route}</h4>
+                <span className={`px-2 py-1 rounded text-xs font-bold whitespace-nowrap ml-2 ${report.safety === 'SAFE' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' : 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300'
                   }`}>
                   {report.safety === 'DANGER' ? '⚠️ DANGER' : '✅ SAFE'}
                 </span>
               </div>
 
-              {/* NEW: WhatsApp Share Button (Absolute Positioned Top Right) */}
+              {/* Share Button */}
               <button
                 onClick={() => handleShare(report)}
                 className="absolute top-4 right-4 text-gray-400 hover:text-green-600 transition-colors"
-                title="Share to WhatsApp"
               >
                 <Share2 className="w-5 h-5" />
               </button>
 
-              {/* Middle Row: Fare & Sacco */}
+              {/* Middle Row */}
               <div className="flex flex-wrap gap-2 mb-3">
-                <span className="bg-gray-100 text-black px-2 py-1 rounded text-sm font-bold">
+                {/* ADDED: dark:bg-gray-700 dark:text-white */}
+                <span className="bg-gray-100 dark:bg-gray-700 text-black dark:text-white px-2 py-1 rounded text-sm font-bold">
                   KES {report.fare}
                 </span>
                 {report.sacco && (
-                  <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-sm font-medium flex items-center gap-1">
+                  <span className="bg-yellow-100 dark:bg-yellow-900/40 text-yellow-800 dark:text-yellow-400 px-2 py-1 rounded text-sm font-medium flex items-center gap-1">
                     <Bus className="w-3 h-3" /> {report.sacco}
                   </span>
                 )}
               </div>
 
-              {/* Incident/Danger Alerts */}
+              {/* Alerts */}
               {(report.incident !== 'NONE' || report.dangerDetails) && (
-                <div className="mt-2 pt-2 border-t border-gray-50 text-sm">
+                <div className="mt-2 pt-2 border-t border-gray-50 dark:border-gray-700 text-sm">
                   {report.incident !== 'NONE' && (
-                    <div className="text-orange-600 font-bold flex items-center gap-1">
+                    <div className="text-orange-600 dark:text-orange-400 font-bold flex items-center gap-1">
                       <AlertTriangle className="w-4 h-4" />
                       {report.incident === 'ACCIDENT' ? 'Accident Reported' :
                         report.incident === 'JAM' ? 'Heavy Traffic' :
@@ -163,7 +159,7 @@ export default function Home() {
                     </div>
                   )}
                   {report.dangerDetails && (
-                    <div className="text-red-600 font-medium mt-1 pl-5">
+                    <div className="text-red-600 dark:text-red-400 font-medium mt-1 pl-5">
                       • {report.dangerDetails}
                     </div>
                   )}
