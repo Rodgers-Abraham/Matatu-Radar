@@ -1,0 +1,21 @@
+{
+    "name": "Matatu Radar",
+    "short_name": "Matatu Radar",
+    "description": "Crowdsourced Matatu safety and fare alerts.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#000000",
+    "theme_color": "#FACC15",
+    "icons": [
+        {
+            "src": "/icon-192.jpg",
+            "sizes": "192x192",
+            "type": "image/jpg"
+        },
+        {
+            "src": "/icon-512.jpg",
+            "sizes": "512x512",
+            "type": "image/jpg"
+        }
+    ]
+}
