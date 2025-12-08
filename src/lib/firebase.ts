@@ -1,9 +1,10 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBh0hQYC7KFNXG3P8zVslJCKBiRec2mv9w",
+
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  
   authDomain: "matatu-radar.firebaseapp.com",
   projectId: "matatu-radar",
   storageBucket: "matatu-radar.firebasestorage.app",
