@@ -45,7 +45,8 @@ export default function ReportPage() {
       fare: transportMode === 'PUBLIC' ? Number(fare) : 0, 
       sacco: (transportMode === 'PUBLIC' && reportCategory === 'VEHICLE') ? sacco : '', 
       plate: (transportMode === 'PUBLIC' && reportCategory === 'VEHICLE') ? plate : '',
-      incident: reportCategory === 'ROAD' ? incident : 'NONE',
+    
+      incident: reportCategory === 'ROAD' ? (incident as any) : 'NONE',
       safety: calculatedSafety as any,
       dangerDetails: reportCategory === 'VEHICLE' ? dangerDetails : ''
     });
@@ -143,12 +144,10 @@ export default function ReportPage() {
               <option value="MAINTENANCE" className="text-black dark:text-white">🚧 Road Maintenance</option>
             </select>
           ) : (
-            // FIX: Explicit text color for the select and options to ensure readability
             <select 
               value={dangerDetails} onChange={(e) => setDangerDetails(e.target.value)}
               className="w-full p-3 rounded-lg border-2 border-red-500 bg-red-50 dark:bg-red-900/40 text-red-900 dark:text-red-100 font-bold focus:ring-2 focus:ring-red-500"
             >
-              {/* Force option text to be black so it's readable on white browser defaults */}
               <option value="" className="text-black">Select Danger...</option>
               <option value="Overloading" className="text-black">⚠️ Overloading</option>
               <option value="Dangerous Driving" className="text-black">🏎️ Dangerous Driving</option>
