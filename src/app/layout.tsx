@@ -2,23 +2,23 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ReportsProvider } from "../context/ReportsContext";
+
+import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Analytics } from "@vercel/analytics/next";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "MatatuRadar",
   description: "Check fares and safety before you board.",
-  manifest: "/manifest.json", // LINKING THE MANIFEST HERE
+  manifest: "/manifest.json",
   icons: {
-    apple: "/icon-192.png", // Icon for iPhones
+    apple: "/icon-192.png", 
   },
 };
 
-// Configuring the color of the browser bar (Yellow for Matatu theme)
 export const viewport: Viewport = {
-  themeColor: "#FACC15",
+  themeColor: "#FACC15", 
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -35,6 +35,9 @@ export default function RootLayout({
         <ReportsProvider>
           {children}
         </ReportsProvider>
+        
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

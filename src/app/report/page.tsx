@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation'; 
-import { useReports } from '@/context/ReportsContext';
+// Import the "Report" type so we can use it for checking
+import { useReports, Report } from '@/context/ReportsContext';
 import { Car, Bus, Siren, Phone, MapPin } from 'lucide-react';
 
 export default function ReportPage() {
@@ -17,7 +18,8 @@ export default function ReportPage() {
   const [sacco, setSacco] = useState('');
   const [plate, setPlate] = useState('');
   
-  const [incident, setIncident] = useState('NONE'); 
+  // FIX: We tell React that "incident" must match the Report type, not just any string
+  const [incident, setIncident] = useState<Report['incident']>('NONE'); 
   const [dangerDetails, setDangerDetails] = useState(''); 
   const [location, setLocation] = useState<string | null>(null);
 
@@ -36,18 +38,19 @@ export default function ReportPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Calculate safety based on user input
     let calculatedSafety: 'SAFE' | 'DANGER' = 'SAFE';
     if (incident !== 'NONE' || dangerDetails !== '') calculatedSafety = 'DANGER';
 
-    // @ts-ignore
+    // No @ts-ignore needed anymore because the types match perfectly!
     addReport({
       route,
       fare: transportMode === 'PUBLIC' ? Number(fare) : 0, 
       sacco: (transportMode === 'PUBLIC' && reportCategory === 'VEHICLE') ? sacco : '', 
       plate: (transportMode === 'PUBLIC' && reportCategory === 'VEHICLE') ? plate : '',
-    
-      incident: reportCategory === 'ROAD' ? (incident as any) : 'NONE',
-      safety: calculatedSafety as any,
+      incident: reportCategory === 'ROAD' ? incident : 'NONE',
+      safety: calculatedSafety,
       dangerDetails: reportCategory === 'VEHICLE' ? dangerDetails : ''
     });
     router.push('/');
@@ -58,7 +61,7 @@ export default function ReportPage() {
       
       {/* Header */}
       <div className="flex items-center gap-4 mb-6 sticky top-0 bg-gray-50 dark:bg-gray-900 z-10 py-2 transition-colors">
-        <button onClick={() => router.back()} className="bg-black dark:bg-white text-white dark:text-black px-4 py-2 rounded-lg font-bold shadow-md transition-colors">
+        <button type="button" onClick={() => router.back()} className="bg-black dark:bg-white text-white dark:text-black px-4 py-2 rounded-lg font-bold shadow-md transition-colors">
           ← BACK
         </button>
         <h1 className="text-2xl font-bold text-black dark:text-white">Make Report</h1>
@@ -134,7 +137,9 @@ export default function ReportPage() {
           {/* Conditional Dropdowns */}
           {reportCategory === 'ROAD' ? (
             <select 
-              value={incident} onChange={(e) => setIncident(e.target.value)}
+              // We cast the value in the onChange to tell Typescript "This string is safe"
+              value={incident} 
+              onChange={(e) => setIncident(e.target.value as Report['incident'])}
               className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white font-medium focus:ring-2 focus:ring-black"
             >
               <option value="NONE" className="text-black dark:text-white">Select Road Incident...</option>
